@@ -1,0 +1,3 @@
+requests
+chirpstack_api
+mysql-connector-python
