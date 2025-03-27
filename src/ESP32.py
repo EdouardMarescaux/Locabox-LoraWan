@@ -15,7 +15,7 @@ dev_eui = bytes([0xff,0xfe,0x38,0x84,0xab,0x08,0xb7,0x64])
 # The API token (retrieved using the web-interface).
 api_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlfa2V5X2lkIjoiMjU1ZTFlMTktZjQ2Mi00MDBlLWIyYTUtYWYwNjJmMjgyYzQ1IiwiYXVkIjoiYXMiLCJpc3MiOiJhcyIsIm5iZiI6MTc0MTg3Mzk5MSwic3ViIjoiYXBpX2tleSJ9.iUvxw_hVlA9M5lG8oppcH97jlidi061wDJWSPRGzxCo"
 
-def sendCode(dev_eui, ):
+def sendCode():
     channel = grpc.insecure_channel(server)
 
     # Device-queue API client.
