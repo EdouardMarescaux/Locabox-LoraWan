@@ -1,14 +1,7 @@
 import random
 import mysql.connector
+from src.Config import *
 from datetime import datetime
-
-# Configuration de la base de données
-DB_CONFIG = {
-    "host": "ext.epid-vauban.fr",
-    "user": "locabox",
-    "password": "locabox2025!",
-    "database": "locabox"
-}
 
 # Fonction pour générer un code à 6 chiffres
 def generate_code():
@@ -107,19 +100,3 @@ def insert_deveui(id_box, deveui):
 
     conn.commit()
     conn.close()
-
-# Exemple d'utilisation
-# id_box = 1  # Remplace par une valeur correcte récupérée depuis ton application
-# deveui = "fffe3884ab08b764"  # Remplace par le DEVEUI correct
-
-# # Insérer ou mettre à jour le DEVEUI
-# insert_deveui(id_box, deveui)
-
-# # Enregistrer une intrusion
-# log_intrusion(id_box, "Intrusion")
-# print(f"🔴 Intrusion détectée et enregistrée pour le box {id_box} !")
-
-# # Générer et insérer un code unique
-# code = insert_unique_code(id_box)
-# print(f"✅ Generated Unique Code: {code}")
-# print(f"✅ Code inséré")
