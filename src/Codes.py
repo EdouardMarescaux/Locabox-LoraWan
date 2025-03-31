@@ -24,12 +24,18 @@ def insert_unique_code(id_box):
     while True:
         code = generate_code()
         if not code_exists(code):
+            print(f"🔄 Tentative d'insertion du code {code} pour le box {id_box}...")  # ✅ DEBUG
+
             conn = mysql.connector.connect(**DB_CONFIG)
             cursor = conn.cursor()
             cursor.execute("INSERT INTO code_log (code, id_box) VALUES (%s, %s)", (code, id_box))
             conn.commit()
+
+            print(f"✅ Code {code} inséré avec succès !")  # ✅ DEBUG
+            
             conn.close()
             return code
+
 
 # Fonction pour vérifier si un code valide a été utilisé avant l'ouverture
 def is_valid_code_used(id_box):
