@@ -3,20 +3,20 @@ from src.Config import *
 
 def is_box_open(id_box: int) -> int:
     """
-    Vérifie si une box est ouverte dans la base de données.
-    Retourne 1 si la box est ouverte, sinon 0.
+    Vérifie si un box est ouvert dans la base de données.
+    Retourne 1 si le box est ouvert, sinon 0.
     """
 
     conn = mysql.connector.connect(**DB_CONFIG)
     cursor = conn.cursor()
     
     try:
-        # Exemple d'une table 'box' avec un champ 'status' qui représente l'état de la box
+        # Exemple d'une table 'box' avec un champ 'status' qui représente l'état du box
         cursor.execute("SELECT locked FROM access_log WHERE id_box = %s", (id_box,))
         result = cursor.fetchone()
         
         if result is not None:
-            # Si status == 1, la box est ouverte, sinon elle est fermée
+            # Si status == 1, le box est ouvert, sinon il est fermé
             status = result[0]
             if status == 1:
                 print(f"Le box {id_box} est fermé.")

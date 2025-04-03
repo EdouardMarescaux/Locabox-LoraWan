@@ -50,13 +50,13 @@ def is_valid_code_used(id_box):
     return result > 0  # Retourne True si un code a été utilisé
 
 # Fonction pour enregistrer une intrusion avec un id_box valide
-def log_intrusion(id_box, info="Intrusion"):
+def log_intrusion(id_box, info="code erroné"):
     if not id_box:
         raise ValueError("id_box ne peut pas être NULL ou vide")
 
     # Vérifier si un code a été utilisé pour ouvrir la box
     if is_valid_code_used(id_box):
-        print(f"✅ Aucun enregistrement d'intrusion, un code a été utilisé pour ouvrir la box {id_box}.")
+        print(f"✅ Aucun enregistrement d'intrusion, un code a été utilisé pour ouvrir le box {id_box}.")
         return
 
     conn = mysql.connector.connect(**DB_CONFIG)
@@ -65,7 +65,8 @@ def log_intrusion(id_box, info="Intrusion"):
     # Insérer l'intrusion avec la date et l'heure actuelles
     timestamp = datetime.now()
     cursor.execute("INSERT INTO alarm_log (alarm_date, info, id_box) VALUES (%s, %s, %s)", (timestamp, info, id_box))
-    
+    print(f"Insertion d'une intrusion, aucun code a été utilisé pour ouvrir le box {id_box}.")
+
     conn.commit()
     conn.close()
 

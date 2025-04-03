@@ -5,13 +5,13 @@ from chirpstack_api.as_pb.external import api
 def sendCode():
     channel = grpc.insecure_channel(CHIRPSTACK_SERVER)
 
-    # Device-queue API client.
+    # Définir les métadonnées de la clé API.
     client = api.DeviceQueueServiceStub(channel)
 
-    # Define the API key meta-data.
+    # Définir les métadonnées de la clé API.
     auth_token = [("authorization", "Bearer %s" % API_TOKEN)]
 
-    # Construct request.
+    # Construction requête.
     req = api.EnqueueDeviceQueueItemRequest()
     req.device_queue_item.confirmed = False
     req.device_queue_item.data = bytes([0x43,0x32, 0x31, 0x33,0x36, 0x35, 0x36,0x45])
