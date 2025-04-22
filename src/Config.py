@@ -23,7 +23,5 @@ user_id = 23
 
 # Messages types pour les notifications
 messages = {
-    "box ouvert": ("🔓 Box Ouvert", "Votre box a été ouvert."),
-    "intrusion": ("🚨 ALERTE INTRUSION", "Tentative d'ouverture suspecte !"),
-    "error": ("❌ Erreur Système", "Un problème a été détecté.")
+    "intrusion": "Une intrusion a été détectée dans votre box !",
 }
