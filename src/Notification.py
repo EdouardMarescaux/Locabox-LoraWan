@@ -9,7 +9,7 @@ def SendNotificationToMobile(user_id: int, event: str):
 
     # Vérifier si l'événement est défini dans le dictionnaire MESSAGES
     if event not in messages:
-        print(f"⚠️ Erreur : L'événement '{event}' n'existe pas dans MESSAGES.")
+        print(f"Erreur : L'événement '{event}' n'existe pas dans MESSAGES.")
         return False  # Empêche l'envoi si l'événement est invalide
 
     message = messages[event]  # Récupérer le message lié à l'événement
@@ -31,14 +31,14 @@ def SendNotificationToMobile(user_id: int, event: str):
         response = requests.post(NOTIFICATION_URL, json=payload, headers=headers, timeout=5)
         # Vérifier la réponse de l'API
         if response.status_code == 200:
-            print(f"✅ Notification envoyée avec succès à l'utilisateur {user_id} : {message}")
+            print(f"Notification envoyée avec succès à l'utilisateur {user_id} : {message}")
             return True
         else:
             # Afficher un message d'erreur détaillé en cas de code 400 ou autre
-            print(f"❌ Erreur lors de l'envoi de la notification (Code {response.status_code})")
+            print(f"Erreur lors de l'envoi de la notification (Code {response.status_code})")
             return False
 
     except requests.RequestException as e:
         # Si une erreur réseau se produit
-        print(f"❌ Erreur réseau lors de l'envoi de la notification : {e}")
+        print(f"Erreur réseau lors de l'envoi de la notification : {e}")
         return False

@@ -24,14 +24,14 @@ def insert_unique_code(id_box):
     while True:
         code = generate_code()
         if not code_exists(code):
-            print(f"🔄 Tentative d'insertion du code {code} pour le box {id_box}...")  # ✅ DEBUG
+            print(f"Tentative d'insertion du code {code} pour le box {id_box}...")  # DEBUG
 
             conn = mysql.connector.connect(**DB_CONFIG)
             cursor = conn.cursor()
             cursor.execute("INSERT INTO code_log (code, id_box) VALUES (%s, %s)", (code, id_box))
             conn.commit()
 
-            print(f"✅ Code {code} inséré avec succès !")  # ✅ DEBUG
+            print(f"Code {code} inséré avec succès !")  # DEBUG
             
             conn.close()
             return code
@@ -56,7 +56,7 @@ def log_intrusion(id_box, info="code erroné"):
 
     # Vérifier si un code a été utilisé pour ouvrir la box
     if is_valid_code_used(id_box):
-        print(f"✅ Aucun enregistrement d'intrusion, un code a été utilisé pour ouvrir le box {id_box}.")
+        print(f"Aucun enregistrement d'intrusion, un code a été utilisé pour ouvrir le box {id_box}.")
         return
 
     conn = mysql.connector.connect(**DB_CONFIG)
@@ -70,7 +70,7 @@ def log_intrusion(id_box, info="code erroné"):
     conn.commit()
     conn.close()
 
-# ✅ Fonction pour insérer un DEVEUI dans la table box et mettre à jour modem
+# Fonction pour insérer un DEVEUI dans la table box et mettre à jour modem
 def insert_deveui(id_box, deveui):
     if not id_box or not deveui:
         raise ValueError("id_box et deveui ne peuvent pas être NULL ou vides")
@@ -84,7 +84,7 @@ def insert_deveui(id_box, deveui):
 
     if existing_box and existing_box[0] != id_box:
         conn.close()
-        raise ValueError(f"⚠️ ERREUR: Le DEVEUI {deveui} est déjà utilisé par le box {existing_box[0]} !")
+        raise ValueError(f"ERREUR: Le DEVEUI {deveui} est déjà utilisé par le box {existing_box[0]} !")
 
     # Vérifier si l'id_box existe dans la table box
     cursor.execute("SELECT COUNT(*) FROM box WHERE id_box = %s", (id_box,))
@@ -93,17 +93,17 @@ def insert_deveui(id_box, deveui):
     if current_deveui == deveui:
         # Le même DEVEUI est déjà enregistré pour ce box, donc on ne fait rien
         conn.close()
-        print(f"✅ Aucun changement : Le DEVEUI {deveui} est déjà associé à la box {id_box}.")
+        print(f"Aucun changement : Le DEVEUI {deveui} est déjà associé à la box {id_box}.")
         return
 
     if current_deveui:
         # Mettre à jour le DEVEUI du box
         cursor.execute("UPDATE box SET modem = %s WHERE id_box = %s", (deveui, id_box))
-        print(f"🔄 Mise à jour : DEVEUI {deveui} mis à jour pour id_box {id_box}.")
+        print(f"Mise à jour : DEVEUI {deveui} mis à jour pour id_box {id_box}.")
     else:
         # Insérer une nouvelle ligne si l'id_box n'existe pas encore
         cursor.execute("INSERT INTO box (id_box, modem) VALUES (%s, %s)", (id_box, deveui))
-        print(f"✅ Inséré : DEVEUI {deveui} ajouté pour id_box {id_box}.")
+        print(f"Inséré : DEVEUI {deveui} ajouté pour id_box {id_box}.")
 
     conn.commit()
     conn.close()

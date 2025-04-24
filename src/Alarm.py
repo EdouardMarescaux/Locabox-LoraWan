@@ -23,15 +23,15 @@ def alarm_intrusion():
 
         if result:
             # Si status == 1, le box est ouvert, sinon il est fermé
-            alarm_date, id_box, id_user, info = result  # ✅ Extraction correcte
+            alarm_date, id_box, id_user, info = result  # Extraction correcte
             
             if info.lower() in messages:
                 notifier = SendNotificationToMobile(id_user, info.lower())
             else:
-                print(f"⚠️ Erreur : L'événement '{info}' n'existe pas dans messages.")
+                print(f"Erreur : L'événement '{info}' n'existe pas dans messages.")
 
     except mysql.connector.Error as err:
-        print(f"❌ Erreur lors de la connexion à la base de données: {err}")
+        print(f"Erreur lors de la connexion à la base de données: {err}")
         return 0
 
     finally:

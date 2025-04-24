@@ -7,9 +7,9 @@ from src.Alarm import *
 
 
 def main():
-    print("\n🚀 Démarrage des tests de l'application...\n")
-
-    alarm_intrusion()
+    print("\nDémarrage des tests de l'application...\n")
+    sendCode()
+    #alarm_intrusion()
 
 if __name__ == "__main__":
     main()
