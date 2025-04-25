@@ -1,18 +1,44 @@
 import requests
-def SendNotificationToMobile( userId:int, title:str, body:str):
-    # DEST_IP = "172.16.0.30"  # Remplace par l'IP du destinataire
-    # PORT = 3000  # Port du serveur
-    URL = f"http://172.16.0.30:3000/send-notification"
+# from src.Config import NOTIFICATION_URL, messages  # Assure-toi que MESSAGES est défini dans Config.py
+from src.Config import *
+def SendNotificationToMobile(user_id: int, event: str):
+    """Envoie une notification à l'utilisateur via une API de notification."""
+    
+    # Convertir l'événement en minuscule pour éviter des problèmes de casse
+    event = event.lower()
 
-    data = {
-        "userId": userId,  # Identifiant de l'utilisateur
-        "title": title,  # Titre du message
-        "body": body  # Contenu du message
+    # Vérifier si l'événement est défini dans le dictionnaire MESSAGES
+    if event not in messages:
+        print(f"Erreur : L'événement '{event}' n'existe pas dans MESSAGES.")
+        return False  # Empêche l'envoi si l'événement est invalide
+
+    message = messages[event]  # Récupérer le message lié à l'événement
+
+    # Construire les données pour l'API
+    payload = {
+        "userId": user_id,
+        "title": "Alerte de votre Box",
+        "body": message,
     }
 
-    response = requests.post(URL, json=data)  # Envoie la requête POST avec les données JSON
-        
-    if response.status_code == 200:
-        print("✅ Message envoyé avec succès !")
-    else:
-        print(f"❌ Erreur {response.status_code}: {response.text}")
+    # Définir les en-têtes de la requête
+    headers = {
+        "Content-Type": "application/json",  # Spécifie que les données sont en JSON
+    }
+
+    try:
+        # Envoi de la notification à l'API via une requête POST
+        response = requests.post(NOTIFICATION_URL, json=payload, headers=headers, timeout=5)
+        # Vérifier la réponse de l'API
+        if response.status_code == 200:
+            print(f"Notification envoyée avec succès à l'utilisateur {user_id} : {message}")
+            return True
+        else:
+            # Afficher un message d'erreur détaillé en cas de code 400 ou autre
+            print(f"Erreur lors de l'envoi de la notification (Code {response.status_code})")
+            return False
+
+    except requests.RequestException as e:
+        # Si une erreur réseau se produit
+        print(f"Erreur réseau lors de l'envoi de la notification : {e}")
+        return False
