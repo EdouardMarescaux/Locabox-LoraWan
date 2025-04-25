@@ -67,8 +67,45 @@ def log_intrusion(id_box, info="code erroné"):
     cursor.execute("INSERT INTO alarm_log (alarm_date, info, id_box) VALUES (%s, %s, %s)", (timestamp, info, id_box))
     print(f"Insertion d'une intrusion, aucun code a été utilisé pour ouvrir le box {id_box}.")
 
+    # Mettre à jour la variable notify à 1
+    cursor.execute("UPDATE box SET notify = 1 WHERE id_box = %s", (id_box,))
+    print(f"Variable notify mise à jour pour le box {id_box}.")
+
     conn.commit()
     conn.close()
+
+    # Envoyer une notification
+    send_notification(f"Intrusion détectée sur le box {id_box} : {info}")
+
+import requests  # Pour envoyer la notification
+
+# Fonction pour envoyer une notification
+def send_notification(message):
+    try:
+        url = "http://172.16.0.30:3000/send-notification"  # Remplacez par l'URL de votre serveur de notification
+        payload = {"message": message}
+        headers = {"Content-Type": "application/json"}
+        response = requests.post(url, json=payload, headers=headers)
+        response.raise_for_status()
+        print("Notification envoyée avec succès.")
+    except requests.exceptions.RequestException as e:
+        print(f"Erreur réseau lors de l'envoi de la notification : {e}")
+
+# Fonction pour gérer une intrusion
+def handle_intrusion(id_box, info="Intrusion détectée"):
+    if not id_box:
+        raise ValueError("id_box ne peut pas être NULL ou vide")
+
+    # Étape 1 : Enregistrer l'intrusion dans la base de données
+    log_intrusion(id_box, info)
+
+    # Étape 3 : Mettre à jour la variable notify à 1
+    conn = mysql.connector.connect(**DB_CONFIG)
+    cursor = conn.cursor()
+    cursor.execute("UPDATE box SET notify = 1 WHERE id_box = %s", (id_box,))
+    conn.commit()
+    conn.close()
+    print(f"Variable notify mise à jour pour le box {id_box}.")
 
 # Fonction pour insérer un DEVEUI dans la table box et mettre à jour modem
 def insert_deveui(id_box, deveui):
@@ -87,16 +124,16 @@ def insert_deveui(id_box, deveui):
         raise ValueError(f"ERREUR: Le DEVEUI {deveui} est déjà utilisé par le box {existing_box[0]} !")
 
     # Vérifier si l'id_box existe dans la table box
-    cursor.execute("SELECT COUNT(*) FROM box WHERE id_box = %s", (id_box,))
-    current_deveui = cursor.fetchone()[0]
+    cursor.execute("SELECT modem FROM box WHERE id_box = %s", (id_box,))
+    current_modem = cursor.fetchone()
     
-    if current_deveui == deveui:
+    if current_modem and current_modem[0] == deveui:
         # Le même DEVEUI est déjà enregistré pour ce box, donc on ne fait rien
         conn.close()
         print(f"Aucun changement : Le DEVEUI {deveui} est déjà associé à la box {id_box}.")
         return
 
-    if current_deveui:
+    if current_modem:
         # Mettre à jour le DEVEUI du box
         cursor.execute("UPDATE box SET modem = %s WHERE id_box = %s", (deveui, id_box))
         print(f"Mise à jour : DEVEUI {deveui} mis à jour pour id_box {id_box}.")
