@@ -5,42 +5,48 @@ from src.Config import *
 def alarm_intrusion():
     """Surveille la base de données pour détecter une intrusion et envoyer une notification."""
 
-    
-    conn = mysql.connector.connect(**DB_CONFIG)
-    cursor = conn.cursor()
-    notifier = False
-
     try:
-        # Recherche d'une intrusion non encore notifiée
-        cursor.execute("""
-            SELECT alarm_log.alarm_date, alarm_log.id_box, id_user_box, LOWER(info) 
-            FROM alarm_log 
-            JOIN rent ON rent.id_box = alarm_log.id_box 
-            WHERE alarm_log.notify = 0 AND info = 'intrusion' 
-            LIMIT 1;
-        """)
-        result = cursor.fetchone()
+        with mysql.connector.connect(**DB_CONFIG) as conn:
+            with conn.cursor() as cursor:
+                # Recherche d'une intrusion non encore notifiée
+                cursor.execute("""
+                    SELECT alarm_log.alarm_date, alarm_log.id_box, id_user_box, LOWER(info) 
+                    FROM alarm_log 
+                    JOIN rent ON rent.id_box = alarm_log.id_box 
+                    WHERE alarm_log.notify = 0 AND info = 'intrusion' 
+                    LIMIT 1;
+                """)
+                result = cursor.fetchone()
 
-        if result:
-            # Si status == 1, le box est ouvert, sinon il est fermé
-            alarm_date, id_box, id_user, info = result  # Extraction correcte
-            
-            if info.lower() in messages:
-                notifier = SendNotificationToMobile(id_user, info.lower())
-            else:
-                print(f"Erreur : L'événement '{info}' n'existe pas dans messages.")
+                if not result:
+                    return  # Rien à notifier
+
+                alarm_date, id_box, id_user, info = result
+
+                print(f"Intrusion détectée sur la box {id_box}. Envoi de notification...")
+
+                # Vérifie que l'événement est bien dans le dictionnaire des messages
+                if info in messages:
+                    if SendNotificationToMobile(id_user, info):
+                        # Mise à jour de la notification après succès
+                        update_notification_status(alarm_date)
+                else:
+                    print(f"Erreur : L'événement '{info}' n'existe pas dans messages.")
 
     except mysql.connector.Error as err:
-        print(f"Erreur lors de la connexion à la base de données: {err}")
-        return 0
+        print(f"Erreur MySQL : {err}")
 
-    finally:
-        conn.close()
+def update_notification_status(alarm_date):
+    """Marque une alarme comme notifiée."""
+    try:
+        with mysql.connector.connect(**DB_CONFIG) as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(
+                    "UPDATE alarm_log SET notify = 1 WHERE alarm_date = %s;",
+                    (alarm_date,)
+                )
+                conn.commit()
+                print(f"Notification marquée comme envoyée pour l'alarme du {alarm_date}.")
+    except mysql.connector.Error as err:
+        print(f"Erreur MySQL lors de la mise à jour : {err}")
 
-    # Mise à jour si une notification a été envoyée
-    if notifier:
-        conn = mysql.connector.connect(**DB_CONFIG)
-        cursor = conn.cursor()
-        cursor.execute("UPDATE alarm_log SET notify = 1 WHERE alarm_date = %s;", (alarm_date,))
-        conn.commit()
-        conn.close()
