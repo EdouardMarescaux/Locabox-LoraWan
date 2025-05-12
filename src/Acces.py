@@ -1,36 +1,50 @@
 import mysql.connector
+import requests
 from src.Config import *
+from src.Notification import *
 
-def is_box_open(id_box: int) -> int:
-    """
-    Vérifie si un box est ouvert dans la base de données.
-    Retourne 1 si le box est ouvert, sinon 0.
-    """
+def handle_access(id_box: int):
+    if not id_box:
+        raise ValueError("id_box ne peut pas être NULL ou vide")
 
-    conn = mysql.connector.connect(**DB_CONFIG)
-    cursor = conn.cursor()
-    
     try:
-        # Exemple d'une table 'box' avec un champ 'status' qui représente l'état du box
-        cursor.execute("SELECT locked FROM access_log WHERE id_box = %s", (id_box,))
-        result = cursor.fetchone()
-        
-        if result is not None:
-            # Si status == 1, le box est ouvert, sinon il est fermé
-            status = result[0]
-            if status == 1:
-                print(f"Le box {id_box} est fermé.")
-                return 1
-            else:
-                print(f"Le box {id_box} est ouvert.")
-                return 0
-        else:
-            print(f"Aucun box trouvé avec l'id {id_box}.")
-            return 0
-    
+        with mysql.connector.connect(**DB_CONFIG) as conn:
+            with conn.cursor(buffered=True) as cursor:
+                # Vérifie l'état actuel du box
+                cursor.execute("SELECT locked FROM access_log WHERE id_box = %s", (id_box,))
+                current_status = cursor.fetchone()
+
+                if current_status is None:
+                    print(f"Aucun box trouvé avec l'id {id_box}.")
+                    return
+
+                if current_status[0] == 0:
+                    print(f"Le box {id_box} est déjà ouvert.")
+                    return
+
+                # Mettre locked = 0 (ouvrir le box)
+                cursor.execute("UPDATE access_log SET locked = 0 WHERE id_box = %s", (id_box,))
+                conn.commit()
+
+                # Insertion dans access_log (journalisation de l'accès)
+                cursor.execute("""
+                    INSERT INTO access_log (id_box, event_type, event_time)
+                    VALUES (%s, %s, NOW())
+                """, (id_box, 'access'))
+                conn.commit()
+                print(f"Événement d'accès inséré pour le box {id_box}.")
+
+                # Envoyer la notification
+                user_id = 23  # À remplacer dynamiquement si possible
+                SendNotificationToMobile(user_id, 'access')
+
+                # Marquer la notification comme envoyée
+                cursor.execute("UPDATE access_log SET notify = 1 WHERE id_box = %s", (id_box,))
+                conn.commit()
+
+                print(f"Le box {id_box} est maintenant ouvert et notifié.")
+
     except mysql.connector.Error as err:
-        print(f"Erreur lors de la connexion à la base de données: {err}")
-        return 0
-    
-    finally:
-        conn.close()
+        print(f"Erreur MySQL : {err}")
+    except requests.exceptions.RequestException as e:
+        print(f"Erreur lors de l'envoi de la notification : {e}")

@@ -24,4 +24,9 @@ user_id = 23
 # Messages types pour les notifications
 messages = {
     "intrusion": "Une intrusion a été détectée dans votre box !",
+    "access": "Accès autorisé à votre box.",
+}
+titles = {
+    "intrusion": "Alerte de votre box !",
+    "access": "Information box",
 }
