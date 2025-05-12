@@ -13,17 +13,32 @@ import time
 def main():
     print("\nDémarrage des tests de l'application...\n")
     while True:
-        sendCode()
-        time.sleep(120)  # Envoie le code toutes les 2 minutes
+        #sendCode()
+        #time.sleep(120)  # Envoie le code toutes les 2 minutes
 
-    # message = "MOKC AITE BOUS"
-    # result = reorganize_trame(message)
-    #print("Message traité :", result)
-    #parse_and_handle(result)
-    #SendNotificationToMobile(23, 'access')
-    # Lancer l'écoute des messages de l'ESP32
-    #listen_for_messages()
-    #alarm_intrusion()
+    # Boucle principale du programme de test
+    
+        print("\n--- Menu de test ---")
+        print("1. Envoyer un code manuellement")
+        print("2. Simuler un accès (ouvrir le box)")
+        print("3. Tester une notification")
+        print("4. Reorganiser une trame manuellement")
+        print("5. Quitter")
+        choix = input("Choix : ")
+
+        if choix == '1':
+            sendCode()
+        elif choix == '2':
+            handle_access(1)  # À remplacer par un ID dynamique
+        elif choix == '3':
+            SendNotificationToMobile(23, 'access')
+        elif choix == '4':
+            message = input("Entrer une trame : ")
+            result = reorganize_trame(message)
+            print("Message réorganisé :", result)
+            parse_and_handle(result)
+        elif choix == '5':
+            print("Fermeture du programme.")
 
 if __name__ == "__main__":
     main()
