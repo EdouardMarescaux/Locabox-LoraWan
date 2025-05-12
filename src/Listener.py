@@ -1,7 +1,7 @@
 import grpc
 from chirpstack_api.as_pb.external import api
-from Config import *
-from Codes import *
+from src.Config import *
+from src.Codes import *
 
 # Fonction pour envoyer un code en aval (downlink)
 def send_code(dev_eui, code):

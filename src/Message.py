@@ -1,7 +1,8 @@
-from Alarm import *
+from datetime import *
+from src.Alarm import *
 #import src.Codes as codes
-from Acces import *
-from Config import *
+from src.Acces import *
+from src.Config import *
 
 # Dictionnaire qui décrit les clés et combien de paramètres elles attendent (en longueur de caractères)
 key_parameters = {
@@ -24,7 +25,7 @@ def handle_IT(): alarm_intrusion()
 def handle_DV(): print("Handle DV: Déverrouiller")
 def handle_VR(): print("Handle VR: Verrouiller")
 def handle_CF(): print("Handle CF: Code faux")
-def handle_OU(): handle_access_message(1)  # Exemple d'ID de box
+def handle_OU(): handle_access(1)  # Exemple d'ID de box
 def handle_FE(): print("Handle BF: Box fermé")
 
 # Association paramètres → fonctions
@@ -82,4 +83,4 @@ def parse_and_handle(message: str):
             param_handlers[message[13:15]]()
             
     
-parse_and_handle(result)
+#parse_and_handle(result)

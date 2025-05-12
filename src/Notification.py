@@ -1,6 +1,6 @@
 import requests
 # from src.Config import NOTIFICATION_URL, messages  # Assure-toi que MESSAGES est défini dans Config.py
-from Config import *
+from src.Config import *
 def SendNotificationToMobile(user_id: int, event: str):
     """Envoie une notification à l'utilisateur via une API de notification."""
     
@@ -13,11 +13,12 @@ def SendNotificationToMobile(user_id: int, event: str):
         return False  # Empêche l'envoi si l'événement est invalide
 
     message = messages[event]  # Récupérer le message lié à l'événement
+    title = titles[event]  # Récupérer le titre lié à l'événement
 
     # Construire les données pour l'API
     payload = {
         "userId": user_id,
-        "title": "Alerte de votre Box",
+        "title": title,
         "body": message,
     }
 
