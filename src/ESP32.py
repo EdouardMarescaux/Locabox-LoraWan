@@ -1,4 +1,4 @@
-from src.Config import *
+from Config import *
 import grpc
 from chirpstack_api.as_pb.external import api
 

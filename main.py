@@ -1,10 +1,10 @@
-from src.Codes import *
-from src.Notification import * 
-from src.ESP32 import *
-from src.Acces import *
-from src.Config import *
-from src.Alarm import *
-from src.Listener import *
+from Codes import *
+from Notification import * 
+from ESP32 import *
+from Acces import *
+from Config import *
+from Alarm import *
+from Listener import *
 
 
 def main():

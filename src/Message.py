@@ -1,7 +1,7 @@
-from src.Alarm import *
+from Alarm import *
 #import src.Codes as codes
-from src.Acces import *
-from src.Config import *
+from Acces import *
+from Config import *
 
 # Dictionnaire qui décrit les clés et combien de paramètres elles attendent (en longueur de caractères)
 key_parameters = {
@@ -62,7 +62,7 @@ print(result)  # Affiche le message avec les espaces traités
 
 
 def parse_and_handle(message: str):
-    if message[15] != "S":
+    if not message.endswith("S"):
         raise ValueError("Le message doit se terminer par 'S'")
     else:
         if message[1:3] in param_handlers.keys():

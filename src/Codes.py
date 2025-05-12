@@ -1,7 +1,7 @@
 from fastapi import FastAPI, HTTPException
 import random
 import mysql.connector
-from src.Config import *
+from Config import *
 
 app = FastAPI()
 

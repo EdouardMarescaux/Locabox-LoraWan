@@ -1,7 +1,7 @@
 import mysql.connector
 import requests
-from src.Config import *
-from src.Notification import *
+from Config import *
+from Notification import *
 
 def handle_access_message(id_box: int):
     """

@@ -1,6 +1,6 @@
 import requests
 # from src.Config import NOTIFICATION_URL, messages  # Assure-toi que MESSAGES est défini dans Config.py
-from src.Config import *
+from Config import *
 def SendNotificationToMobile(user_id: int, event: str):
     """Envoie une notification à l'utilisateur via une API de notification."""
     

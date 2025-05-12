@@ -1,6 +1,6 @@
 import mysql.connector
-from src.Notification import *
-from src.Config import *
+from Notification import *
+from Config import *
 
 def alarm_intrusion():
     """Surveille la base de données pour détecter une intrusion et envoyer une notification."""
