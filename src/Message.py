@@ -17,9 +17,8 @@ key_parameters = {
 # Fonctions pour chaque paramètre
 def handle_DR(): print("Handle DR: Démarrage")
 def handle_OK(): print("Handle OK: Accès autorisé")
-def handle_NC(): print("Handle NC: Nouveau code")
 def handle_CR(): print("Handle RC: Code reçu")
-def handle_DC(): print("Handle DC: Demande code")
+def handle_CU(): print("Handle CU: Code utilisé")
 def handle_EC(): print("Handle EC: Erreur code")
 def handle_IT(): alarm_intrusion()
 def handle_DV(): print("Handle DV: Déverrouiller")
@@ -32,9 +31,8 @@ def handle_FE(): print("Handle BF: Box fermé")
 param_handlers = {
     "DR": handle_DR,
     "OK": handle_OK,
-    "NC": handle_NC,
     "CR": handle_CR,
-    "DC": handle_DC,
+    "CU": handle_CU,
     "EC": handle_EC,
     "IT": handle_IT,
     "DV": handle_DV,
