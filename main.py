@@ -42,7 +42,7 @@ def main():
         elif choix == '5':
             print("Fermeture du programme.")
         elif choix == '6':
-            listen_and_process()
+            listen_from_php_file()
 
 if __name__ == "__main__":
     main()

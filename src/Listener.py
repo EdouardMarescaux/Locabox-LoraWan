@@ -47,10 +47,10 @@
 #         print(f"Erreur lors de l'écoute des messages : {e.details()}")
 
 import json
-from src.Codes import generate_code
-from src.ESP32 import send_code
-from src.Alarm import alarm_intrusion
-from src.Acces import handle_access
+from src.Codes import *
+from src.ESP32 import *
+from src.Alarm import *
+from src.Acces import *
 
 def listen_from_php_file():
     try:
