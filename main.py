@@ -24,6 +24,8 @@ def main():
         print("3. Tester une notification")
         print("4. Reorganiser une trame manuellement")
         print("5. Quitter")
+        print("6. Écouter les messages ChirpStack")
+        print("---------------------")
         choix = input("Choix : ")
 
         if choix == '1':
@@ -39,6 +41,8 @@ def main():
             parse_and_handle(result)
         elif choix == '5':
             print("Fermeture du programme.")
+        elif choix == '6':
+            listen_and_process()
 
 if __name__ == "__main__":
     main()
