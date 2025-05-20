@@ -63,10 +63,10 @@ def listen_from_php_file():
         print(f"[~] Message reçu : {payload} | DevEUI : {dev_eui}")
 
         # Décision en fonction du message
-        if payload == "DR":
+        if payload == "DC":
             print("[*] Démarrage détecté. Génération et envoi du code.")
             code = generate_code()
-            send_code(dev_eui, code)
+            sendCode(dev_eui, code)
 
         elif payload == "IT":
             print("[!] Intrusion détectée. Traitement de l'alarme.")
