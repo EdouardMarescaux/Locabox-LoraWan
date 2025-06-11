@@ -1,7 +1,7 @@
 <?php
 
 header("Content-type: application/json");
-$fp=@fopen("TMP.txt",a);
+$fp=@fopen("TMP.txt","a");
 fwrite($fp,"\r\n"."appel"."\r\n");
 
 // Connexion à la base de données MySQL
@@ -20,8 +20,6 @@ $messages = [
 $titles = [
     'intrusion' => "Alerte Sécurité",
     'ouverture' => "Box Ouvert",
-	'fermeture' => "Box Fermé",
-    'code_errone' => "Erreur d'Authentification"
 ];
 
 define("NOTIFICATION_URL", "http://172.16.0.30:3000/send-notification");
@@ -66,6 +64,9 @@ try {
 } 
 catch (PDOException $e) {
 	echo "Erreur : " . $e->getMessage();
+    fwrite($fp, "Erreur connexion BDD : " . $e->getMessage() . "\r\n");
+    fclose($fp);
+    exit; // Arrête le script proprement si connexion échouée
 }
 
 try{
@@ -127,13 +128,23 @@ try{
 	if ($A== "IT"){
 		$bdd->exec("INSERT INTO alarm_log (info, id_box, notify) VALUES ('Intrusion', $id_box, 0)");
         fwrite($fp,"intrusion inseree"."\r\n");
+		
+		// Envoi de la notification ouverture
+		if (sendNotificationToMobile(23, 'intrusion')) {
+			fwrite($fp, "Notification d'intrusion envoyée avec succès\r\n");
+			$bdd->exec("UPDATE alarm_log SET notify = 1 WHERE id_box = $id_box ORDER BY alarm_date DESC LIMIT 1");
+		} 
+		else {
+			fwrite($fp, "Échec de l'envoi de la notification d'intrusion\r\n");
+		}
 	}
 	
+	// Ouverture
 	if ($B== "OU"){
         $bdd->exec("UPDATE access_log SET locked = '0', access_date = NOW(), notify = '0' WHERE id_box = $id_box");
 		fwrite($fp,"box ouvert"."\r\n");
 		
-		Envoi de la notification ouverture
+		// Envoi de la notification ouverture
 		if (sendNotificationToMobile(23, 'ouverture')) {
 			fwrite($fp, "Notification ouverture envoyée avec succès\r\n");
 			$bdd->exec("UPDATE access_log SET notify = 1 WHERE id_box = $id_box ORDER BY access_date DESC LIMIT 1");
@@ -143,6 +154,7 @@ try{
 		}
 	}
 	
+	// Fermeture
 	if ($B== "FE"){
         $bdd->exec("UPDATE access_log SET locked = '1', access_date = NOW(), notify = '0' WHERE id_box = $id_box");
 		fwrite($fp,"box ferme"."\r\n");
